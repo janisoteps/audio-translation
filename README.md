@@ -119,11 +119,24 @@ The application uses a **4-process pipeline** architecture for maximum efficienc
 |---------|-------------------|----------------|-------------|
 | Chrome (Desktop) | ✅ | ✅ | ✅ |
 | Chrome (Android) | ✅ | ✅ | ✅ |
-| Safari (iOS) | ⚠️ Limited | ✅ | ⚠️ |
+| Edge (Desktop) | ✅ | ✅ | ✅ |
+| **Chrome (iOS)** | ❌ | ✅ | ❌ |
+| **Safari (iOS)** | ❌ | ✅ | ❌ |
 | Firefox | ❌ | ✅ | ❌ |
-| Edge | ✅ | ✅ | ✅ |
 
-**Note**: Chrome on Android provides the best experience due to superior speech recognition support.
+### ⚠️ iOS Limitation
+
+**This app DOES NOT work on iPhone or iPad** due to Apple's restrictions on the Web Speech Recognition API.
+
+- **Apple does not allow** any browser (including Chrome) to use speech recognition on iOS
+- All browsers on iOS are required to use Safari's WebKit engine
+- Safari's WebKit does not support the Web Speech Recognition API
+
+**✅ Supported Devices:**
+- Android phones with Chrome browser
+- Windows/Mac/Linux computers with Chrome or Edge
+
+**Note**: Chrome on Android provides the best mobile experience due to superior speech recognition support.
 
 ## ⚙️ Configuration
 
@@ -192,9 +205,18 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## 🐛 Troubleshooting
 
 ### No audio is being captured
+
+**If on iPhone/iPad:**
+- Unfortunately, iOS does not support Web Speech Recognition
+- This is an Apple restriction, not a bug
+- Please use an Android phone or desktop computer instead
+
+**If on Android/Desktop:**
 - Check microphone permissions in browser settings
+- Look for the microphone icon in the browser address bar and click "Allow"
 - Ensure microphone is not muted or being used by another application
 - Try refreshing the page and granting permissions again
+- For Android: Settings → Apps → Chrome → Permissions → Microphone → Allow
 
 ### Translations are delayed
 - Check your internet connection speed

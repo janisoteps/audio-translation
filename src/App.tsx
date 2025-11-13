@@ -103,6 +103,15 @@ function App() {
   useEffect(() => {
     if (!isListening) return
 
+    // Check for iOS (including Chrome on iOS which uses Safari's engine)
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent)
+    
+    if (isIOS) {
+      alert('⚠️ iOS Limitation\n\nUnfortunately, Apple does not allow Web Speech Recognition on iOS, even in Chrome.\n\n✅ This app works on:\n• Android phones (Chrome)\n• Desktop computers (Chrome, Edge)\n\n❌ Does NOT work on:\n• iPhone\n• iPad\n\nSorry for the inconvenience! This is an Apple restriction, not a bug in the app.')
+      setIsListening(false)
+      return
+    }
+
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
       const recognition = new SpeechRecognition()
@@ -180,7 +189,21 @@ function App() {
       }
       
       recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
-        if (event.error === 'no-speech' || event.error === 'audio-capture') {
+        if (event.error === 'no-speech') {
+          return // Ignore no speech errors, they're normal
+        }
+        if (event.error === 'audio-capture') {
+          alert('❌ No microphone detected.\n\nPlease:\n1. Connect a microphone\n2. Check browser permissions\n3. Ensure no other app is using it')
+          setIsListening(false)
+          return
+        }
+        if (event.error === 'not-allowed') {
+          alert('❌ Microphone permission denied.\n\nPlease grant microphone access in your browser settings and reload.')
+          setIsListening(false)
+          return
+        }
+        if (event.error === 'network') {
+          alert('❌ Network error.\n\nSpeech recognition requires internet connection.')
           return
         }
       }
@@ -199,9 +222,67 @@ function App() {
       
       try {
         recognition.start()
-      } catch (error) {
-        alert('Failed to start speech recognition. Please check microphone permissions.')
+        
+        // Test if recognition is actually working after 3 seconds
+        setTimeout(() => {
+          if (isListening && recognitionRef.current && !allProcessedTextRef.current) {
+            // No text has been processed yet - might be a problem
+            const confirm = window.confirm(
+              '🎤 No audio detected yet.\n\n' +
+              'Possible issues:\n' +
+              '1. Microphone permission not granted\n' +
+              '2. Wrong microphone selected\n' +
+              '3. Microphone is muted\n\n' +
+              'Try speaking now. If still not working, click OK to see troubleshooting tips.'
+            )
+            
+            if (confirm) {
+              alert(
+                '🔧 Troubleshooting:\n\n' +
+                '1. Check browser address bar for microphone icon\n' +
+                '2. Click it and allow microphone access\n' +
+                '3. Reload the page\n' +
+                '4. Make sure no other app is using the microphone\n' +
+                '5. Try speaking louder or closer to the microphone\n\n' +
+                '📱 For Android:\n' +
+                'Settings → Apps → Chrome → Permissions → Microphone → Allow'
+              )
+            }
+          }
+        }, 3000)
+      } catch (error: any) {
+        const errorMsg = error?.message || 'Unknown error'
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+        const isHTTPS = window.location.protocol === 'https:'
+        
+        let message = '❌ Failed to start speech recognition.\n\n'
+        
+        if (isMobile && !isHTTPS) {
+          message += '🔒 Mobile browsers require HTTPS for microphone access.\n\n'
+          message += 'Solutions:\n'
+          message += '1. Deploy your app with HTTPS\n'
+          message += '2. Use ngrok or similar tunneling service\n'
+          message += '3. Test on desktop with localhost'
+        } else if (errorMsg.includes('not-allowed') || errorMsg.includes('permission')) {
+          message += '🎤 Microphone permission denied.\n\n'
+          message += 'Please:\n'
+          message += '1. Check browser permissions\n'
+          message += '2. Grant microphone access\n'
+          message += '3. Reload the page and try again'
+        } else {
+          message += 'Error: ' + errorMsg + '\n\n'
+          message += 'Please check:\n'
+          message += '1. Microphone permissions\n'
+          message += '2. No other app is using the microphone\n'
+          message += '3. You are using Chrome browser'
+        }
+        
+        alert(message)
+        setIsListening(false)
       }
+    } else {
+      alert('❌ Speech Recognition Not Supported\n\nYour browser does not support speech recognition.\n\nPlease use:\n• Chrome on Android\n• Chrome on Desktop\n• Edge on Desktop')
+      setIsListening(false)
     }
 
     return () => {
