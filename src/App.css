@@ -123,7 +123,7 @@ h1 {
 .transcription-section,
 .translation-section {
   margin-bottom: 2rem;
-}
+  }
 
 .transcription-section h2,
 .translation-section h2 {
@@ -131,7 +131,7 @@ h1 {
   color: #666;
   margin-bottom: 0.75rem;
   font-weight: 600;
-}
+  }
 
 .text-display {
   min-height: 100px;
@@ -204,12 +204,12 @@ h1 {
   h1 {
     font-size: 1.5rem;
     margin-bottom: 1.5rem;
-  }
+}
 
   .start-stop-btn {
     padding: 0.875rem 1.5rem;
     font-size: 1.1rem;
-  }
+}
 
   .text-display {
     min-height: 80px;
