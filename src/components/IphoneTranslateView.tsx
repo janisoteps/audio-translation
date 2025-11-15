@@ -212,6 +212,13 @@ export function IphoneTranslateView() {
         isTranslatingRef.current = false
         isSpeakingRef.current = false
         
+        // Prime speech synthesis for iOS (must happen on user interaction)
+        if (window.speechSynthesis) {
+          // Speak empty utterance to "wake up" iOS speech synthesis
+          const primeUtterance = new SpeechSynthesisUtterance('')
+          window.speechSynthesis.speak(primeUtterance)
+        }
+        
         // Fetch a fresh token (tokens are single-use only)
         const freshToken = await getToken(password)
         

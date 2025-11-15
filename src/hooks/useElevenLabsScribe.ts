@@ -22,12 +22,14 @@ const WORDS_PER_PHRASE = 10 // Split into 10-word chunks for translation
  */
 export const useElevenLabsScribe = ({
   onPhrase,
+  language,
 }: UseElevenLabsScribeProps): UseElevenLabsScribeReturn => {
   // Track how many words we've already processed from partial transcripts
   const processedWordCountRef = useRef<number>(0)
   
   const scribe = useScribe({
     modelId: 'scribe_v2_realtime',
+    languageCode: language || 'lv', // Specify language for transcription
     
     onPartialTranscript: (data) => {
       // Process partial transcripts when they reach 10+ unprocessed words
