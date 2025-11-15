@@ -212,34 +212,6 @@ export function DefaultTranslateView() {
       
       try {
         recognition.start()
-        
-        // Test if recognition is actually working after 3 seconds
-        setTimeout(() => {
-          if (isListening && recognitionRef.current && !allProcessedTextRef.current) {
-            // No text has been processed yet - might be a problem
-            const confirm = window.confirm(
-              '🎤 No audio detected yet.\n\n' +
-              'Possible issues:\n' +
-              '1. Microphone permission not granted\n' +
-              '2. Wrong microphone selected\n' +
-              '3. Microphone is muted\n\n' +
-              'Try speaking now. If still not working, click OK to see troubleshooting tips.'
-            )
-            
-            if (confirm) {
-              alert(
-                '🔧 Troubleshooting:\n\n' +
-                '1. Check browser address bar for microphone icon\n' +
-                '2. Click it and allow microphone access\n' +
-                '3. Reload the page\n' +
-                '4. Make sure no other app is using the microphone\n' +
-                '5. Try speaking louder or closer to the microphone\n\n' +
-                '📱 For Android:\n' +
-                'Settings → Apps → Chrome → Permissions → Microphone → Allow'
-              )
-            }
-          }
-        }, 3000)
       } catch (error: any) {
         const errorMsg = error?.message || 'Unknown error'
         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
